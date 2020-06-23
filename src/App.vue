@@ -1,19 +1,40 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header />
+    <card v-for="item in items" v-bind="item" v-bind:key="item.id" />
+    <observer v-on:intersect="intersected" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from "./components/Header.vue";
+import Card from "./components/Card.vue";
+import observer from "./components/observer.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
+    Header,
+    Card,
+    observer
+  },
+
+  data() {
+    return {
+      items: [],
+      index: 1
+    };
+  },
+  methods: {
+    async intersected() {
+      const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts?_page=${this.index++}`
+      );
+      const json = await response.json();
+      this.items = [...this.items, ...json];
+    }
   }
-}
+};
 </script>
 
 <style>
@@ -23,6 +44,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
